@@ -1,0 +1,420 @@
+{
+	"info": {
+		"_postman_id": "1dd6ccdf-c974-4381-89e0-c30522bab6c9",
+		"name": "SKIP_CPA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25103339"
+	},
+	"item": [
+		{
+			"name": "Запрос токена",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"token\", jsonData.token)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v4/{{portal}}/token",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"{{portal}}",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Старт платежа",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "merchantId",
+							"value": "{{merchantId}}",
+							"description": "Идентификатор магазина в системе банка",
+							"type": "default"
+						},
+						{
+							"key": "accountId",
+							"value": "{{accountId}}",
+							"description": "Идентификатор виртуального счета ТСП",
+							"type": "default"
+						},
+						{
+							"key": "description",
+							"value": "Test payment",
+							"description": "Описание заказа",
+							"type": "default"
+						},
+						{
+							"key": "currency",
+							"value": "RUB",
+							"description": "Валюта заказа",
+							"type": "default"
+						},
+						{
+							"key": "amount",
+							"value": "20000",
+							"description": "Сумма платежа в копейках",
+							"type": "default"
+						},
+						{
+							"key": "state.redirect",
+							"value": "payment_page",
+							"description": "Признак использования банковской ПС",
+							"type": "default"
+						},
+						{
+							"key": "3ds2.supported",
+							"value": "true",
+							"description": "Признак поддержки 3ds_v2",
+							"type": "default"
+						},
+						{
+							"key": "state.in_progress",
+							"value": "no",
+							"description": "Признак синхронного режима работы",
+							"type": "text"
+						},
+						{
+							"key": "back_url_s",
+							"value": "{{returnUrl}}",
+							"description": "Адрес возврата плательщика в случае успешного платежа",
+							"type": "text"
+						},
+						{
+							"key": "back_url_f",
+							"value": "{{returnUrl}}",
+							"description": "Адрес возврата плательщика в случае неуспешного платежа",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/api/v4/{{portal}}/payment/{{token}}/start",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"{{portal}}",
+						"payment",
+						"{{token}}",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ответ на оферту",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"if (responseJson && responseJson.post && responseJson.post.PaReq) {\r",
+							"  const PaReqValue = responseJson.post.PaReq;\r",
+							"  pm.environment.set(\"PaReq\", PaReqValue);\r",
+							"  console.log(\"PaReq value set:\", PaReqValue);\r",
+							"} else {\r",
+							"  console.error(\"Error: PaReq value not found in the response.\");\r",
+							"}\r",
+							"\r",
+							"pm.test(\"PaReq variable set\", function () {\r",
+							"    pm.expect(pm.environment.get(\"PaReq\")).to.be.ok;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "src.csc",
+							"value": "160",
+							"type": "text"
+						},
+						{
+							"key": "src.expiry",
+							"value": "1230",
+							"type": "text"
+						},
+						{
+							"key": "src.pan",
+							"value": "2200010100009938",
+							"type": "text"
+						},
+						{
+							"key": "src.type",
+							"value": "card",
+							"type": "text"
+						},
+						{
+							"key": "src.cardholder",
+							"value": "Dmitriy Tveritin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://lt.pga.gazprombank.ru/api/v4/{{portal_id}}/payment/{{token}}/accept",
+					"protocol": "https",
+					"host": [
+						"lt",
+						"pga",
+						"gazprombank",
+						"ru"
+					],
+					"path": [
+						"api",
+						"v4",
+						"{{portal_id}}",
+						"payment",
+						"{{token}}",
+						"accept"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ACS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"if (responseJson && responseJson.result && responseJson.result.status) {\r",
+							"    const resultStatus = responseJson.result.status;\r",
+							"\r",
+							"    if (resultStatus === \"SUCCESS\") {\r",
+							"        pm.test(\"Result status is SUCCESS\", function() {\r",
+							"            pm.expect(resultStatus).to.eql(\"SUCCESS\");\r",
+							"        });\r",
+							"    } else {\r",
+							"          pm.test(\"Result status is not SUCCESS\", function () {\r",
+							"            pm.expect(resultStatus).to.not.eql(\"SUCCESS\");\r",
+							"            pm.expect.fail(\"Result status is not 'SUCCESS', but '\" + resultStatus + \"'\");\r",
+							"        });\r",
+							"    }\r",
+							"} else {\r",
+							"    pm.test(\"Result status is missing or undefined\", function () {\r",
+							"        pm.expect.fail(\"Result object or status property is not found in the response.\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "PaReq",
+							"value": "{{PaReq}}",
+							"type": "text"
+						},
+						{
+							"key": "MD",
+							"value": "MD",
+							"type": "text"
+						},
+						{
+							"key": "TermUrl",
+							"value": "https://lt.pga.gazprombank.ru/api/v4/{{portal_id}}/payment/{{token}}/merchant-return",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://lt.pga.gazprombank.ru/ds_acs/acs",
+					"protocol": "https",
+					"host": [
+						"lt",
+						"pga",
+						"gazprombank",
+						"ru"
+					],
+					"path": [
+						"ds_acs",
+						"acs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Запрос статуса",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v4/{{portal}}/payment/{{token}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v4",
+						"{{portal}}",
+						"payment",
+						"{{token}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "merchantId",
+			"value": "merchant_identificator"
+		},
+		{
+			"key": "accountId",
+			"value": "accountId_identificator"
+		},
+		{
+			"key": "host",
+			"value": "https://lt.pga.gazprombank.ru"
+		},
+		{
+			"key": "portal",
+			"value": "{{portal_id}}"
+		},
+		{
+			"key": "returnUrl",
+			"value": ""
+		}
+	]
+}
