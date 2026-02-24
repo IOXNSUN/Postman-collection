@@ -3,8 +3,6 @@
 
 # 📝 3️⃣ Postman-collection
 
-``markdown
-# Postman-collection
 
 ![Главный скриншот](screenshots/screen1.jpg)
 
