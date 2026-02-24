@@ -6,6 +6,7 @@
 ``markdown
 # Postman-collection
 
+![Главный скриншот](screenshots/screen1.jpg)
 
 ## О проекте
 Коллекции Postman для тестирования интеграций с внешними API (банковские платежи, маркетплейсы).
@@ -14,7 +15,6 @@
 - Postman
 - API testing
 - Automation with Newman / CI/CD
-
 
 
 ## Установка и запуск
